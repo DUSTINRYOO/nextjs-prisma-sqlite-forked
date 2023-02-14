@@ -1,21 +1,32 @@
 import type { NextPage } from "next";
+import { useRouter } from "next/router";
 import { SubmitHandler, useForm } from "react-hook-form";
 
-type Inputs = {
-  name: string;
+type loginForm = {
   email: string;
 };
 
 const logIn: NextPage = () => {
+  const router = useRouter();
+
+  const onValid = (data: loginForm) => {
+    fetch("/api/log-in", {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    router.push("/");
+  };
   const {
     register,
     handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm<Inputs>();
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
 
-  console.log(watch("name")); // watch input value by passing the name of it
+    formState: { errors },
+  } = useForm<loginForm>();
+  const onSubmit: SubmitHandler<loginForm> = (data) => onValid(data);
+
   return (
     <div>
       <h1>Login</h1>

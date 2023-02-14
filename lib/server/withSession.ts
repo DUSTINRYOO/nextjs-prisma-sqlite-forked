@@ -1,22 +1,18 @@
-/* import { withIronSessionApiRoute } from "iron-session/next";
-import useSWR from "swr";
+import { withIronSessionApiRoute } from "iron-session/next";
 
-export default withIronSessionApiRoute(
-  async function loginRoute(req, res) {
-    const { data, error } = useSWR("/api/users/me");
-    req.session.user = {
-      id: 230,
-      admin: true,
+declare module "iron-session" {
+  interface IronSessionData {
+    user?: {
+      id: number;
     };
-    await req.session.save();
-    res.send({ ok: true });
-  },
-  {
-    cookieName: "myapp_cookiename",
-    password: "complex_password_at_least_32_characters_long",
-    // secure: true should be used in production (HTTPS) but can't be used in development (HTTP)
-    cookieOptions: {
-      secure: process.env.NODE_ENV === "production",
-    },
-  },
-); */
+  }
+}
+
+const cookieOptions = {
+  cookieName: "nextjspractice",
+  password: "2q0438rq30948utq324jhrt202403rj2430r98u20348ruj2038ur",
+};
+
+export function withApiSession(fn: any) {
+  return withIronSessionApiRoute(fn, cookieOptions);
+}

@@ -1,20 +1,31 @@
 import type { NextPage } from "next";
+import { useRouter } from "next/router";
 import { useForm, SubmitHandler } from "react-hook-form";
-import handler from "../api/create-account";
 
-type Inputs = {
+type CreateForm = {
   name: string;
   email: string;
 };
 
 const createAccount: NextPage = () => {
+  const router = useRouter();
+
+  const onValid = (data: CreateForm) => {
+    fetch("/api/create-account", {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    router.push("/log-in");
+  };
   const {
     register,
     handleSubmit,
-
     formState: { errors },
-  } = useForm<Inputs>();
-  const onSubmit: SubmitHandler<Inputs> = async (data) => handler(data);
+  } = useForm<CreateForm>();
+  const onSubmit: SubmitHandler<CreateForm> = async (data) => onValid(data);
 
   return (
     <div>
