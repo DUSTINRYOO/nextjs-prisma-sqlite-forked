@@ -14,6 +14,9 @@ async function handler(
   const user = await client.user.findUnique({
     where: { id: req.session.user?.id },
   });
+  if (!req.session.user) {
+    return res.status(401).json({ ok: false, error: "Plz log in." });
+  }
   res.json({ ok: true, user });
 }
 

@@ -2,6 +2,10 @@ import { NextApiRequest, NextApiResponse } from "next";
 import client from "../../lib/server/client";
 import { withApiSession } from "../../lib/server/withSession";
 
+export interface ResponseType {
+  ok: boolean;
+}
+
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseType>
@@ -11,11 +15,14 @@ async function handler(
       email: req.body.email,
     },
   });
+  if (!exist) {
+    return res.json({ ok: false });
+  }
   req.session.user = {
     id: exist!.id,
   };
   await req.session.save();
-  res.status(200).end();
+  return res.json({ ok: true });
 }
 
 export default withApiSession(handler);

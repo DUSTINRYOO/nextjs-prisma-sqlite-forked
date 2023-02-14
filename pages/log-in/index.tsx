@@ -9,20 +9,31 @@ type loginForm = {
 const logIn: NextPage = () => {
   const router = useRouter();
 
-  const onValid = (data: loginForm) => {
-    fetch("/api/log-in", {
+  const onValid = async (data: loginForm) => {
+    const verified = await fetch("/api/log-in", {
       method: "POST",
       body: JSON.stringify(data),
       headers: {
         "Content-Type": "application/json",
       },
-    });
-    router.push("/");
+    }).then((response) =>
+      response.json().catch(() => {
+        return response.ok;
+      })
+    );
+
+    if (!verified.ok) {
+      resetField("email");
+      alert("Email doesn't exist");
+      return router.replace("/log-in");
+    } else {
+      router.replace("/");
+    }
   };
   const {
     register,
     handleSubmit,
-
+    resetField,
     formState: { errors },
   } = useForm<loginForm>();
   const onSubmit: SubmitHandler<loginForm> = (data) => onValid(data);
